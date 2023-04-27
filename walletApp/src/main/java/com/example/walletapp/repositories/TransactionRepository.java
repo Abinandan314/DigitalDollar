@@ -1,0 +1,14 @@
+package com.example.walletapp.repositories;
+
+import com.example.walletapp.models.Transaction;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface TransactionRepository extends MongoRepository<Transaction,String> {
+    List<Optional<Transaction>> findAllBySenderUsername(String senderUsername);
+    List<Optional<Transaction>> findAllByReceiverUsername(String receiverUsername);
+}

@@ -1,0 +1,64 @@
+.dummy table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .dummy th {
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    padding: 8px;
+  }
+  
+  .dummy td {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 8px;
+  }
+  
+  .dummy tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .dummy tr:hover {
+    background-color: #ddd;
+  }
+  
+  .dummy caption {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .dummy thead {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .dummy tfoot {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .dummy tfoot td {
+    font-weight: bold;
+  }
+  
+  .dummy tbody td:first-child,
+  .dummy thead th:first-child,
+  .dummy tfoot td:first-child {
+    border-left: none;
+  }
+  
+  .dummy tbody td:last-child,
+  .dummy thead th:last-child,
+  .dummy tfoot td:last-child {
+    border-right: none;
+  }
+  

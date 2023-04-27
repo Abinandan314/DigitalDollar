@@ -1,0 +1,15 @@
+version: "2"
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongo-container
+    hostname: localhost
+    ports:
+      - 27017:27017
+  wallet-app-docker:
+    build: walletApp/
+    container_name: walletApp-container
+    hostname: localhost
+    ports:
+      - 8080:8080
+

@@ -1,0 +1,184 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > WalletService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.walletapp.services</a>
+</div>
+
+<h1>Coverage Summary for Class: WalletService (com.example.walletapp.services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">WalletService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (39/39)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.walletapp.services;
+&nbsp;
+&nbsp;import com.example.walletapp.models.User;
+&nbsp;import com.example.walletapp.models.Wallet;
+&nbsp;import com.example.walletapp.repositories.WalletRepository;
+&nbsp;import com.example.walletapp.utils.BalanceDTO;
+&nbsp;import com.example.walletapp.utils.TransferAmountDTO;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;public class WalletService{</b>
+&nbsp;    @Autowired
+&nbsp;    private WalletRepository walletRepository;
+&nbsp;    @Autowired
+&nbsp;    private TransactionService transactionService;
+&nbsp;    @Autowired
+&nbsp;    private CashbackService cashbackService;
+&nbsp;
+&nbsp;    public void createWallet(User user){
+<b class="fc">&nbsp;        Wallet wallet = new Wallet();</b>
+<b class="fc">&nbsp;        wallet.setUser(user);</b>
+<b class="fc">&nbsp;        wallet.setTotalBalance(0);</b>
+<b class="fc">&nbsp;        wallet.setUsername(user.getUsername());</b>
+<b class="fc">&nbsp;        walletRepository.save(wallet);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ResponseEntity&lt;?&gt; getUserWallet(String username){
+<b class="fc">&nbsp;        Optional&lt;Wallet&gt; wallet = walletRepository.findByUsername(username);</b>
+<b class="fc">&nbsp;        if (!wallet.isPresent()){</b>
+<b class="fc">&nbsp;            return new ResponseEntity&lt;String&gt;(&quot;User with given username not found&quot;, HttpStatus.NOT_FOUND);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return new ResponseEntity&lt;Wallet&gt;(wallet.get(),HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ResponseEntity&lt;?&gt; updateWalletBalance(String username, double balance){
+<b class="fc">&nbsp;        Optional&lt;Wallet&gt; wallet = walletRepository.findByUsername(username);</b>
+<b class="fc">&nbsp;        if (!wallet.isPresent()){</b>
+<b class="fc">&nbsp;            return new ResponseEntity&lt;String&gt;(&quot;User with given username not found&quot;, HttpStatus.NOT_FOUND);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if(balance == 0){</b>
+<b class="fc">&nbsp;            return new ResponseEntity&lt;String&gt;(&quot;Please provide appropiate amount&quot;, HttpStatus.NOT_ACCEPTABLE);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        double updatedTotalBalance = wallet.get().getTotalBalance() + balance;</b>
+<b class="fc">&nbsp;        wallet.get().setTotalBalance(updatedTotalBalance);</b>
+<b class="fc">&nbsp;        walletRepository.save(wallet.get());</b>
+<b class="fc">&nbsp;        cashbackService.createCashback(username);</b>
+<b class="fc">&nbsp;        return new ResponseEntity&lt;Wallet&gt;(wallet.get(),HttpStatus.OK);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ResponseEntity&lt;?&gt; transferAmountToAnotherUser(String username,TransferAmountDTO transferAmountDTO){
+<b class="fc">&nbsp;        Optional&lt;Wallet&gt; senderWallet = walletRepository.findByUsername(username);</b>
+<b class="fc">&nbsp;        Optional&lt;Wallet&gt; receiverWallet = walletRepository.findByUsername(transferAmountDTO.getUsername());</b>
+<b class="fc">&nbsp;        double transferAmount = transferAmountDTO.getTransferAmount();</b>
+<b class="fc">&nbsp;        if(!senderWallet.isPresent()){</b>
+<b class="fc">&nbsp;            return new ResponseEntity&lt;String&gt;(&quot;User with given username not found&quot;, HttpStatus.NOT_FOUND);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if(!receiverWallet.isPresent()){</b>
+<b class="fc">&nbsp;            return new ResponseEntity&lt;String&gt;(&quot;User with given username not found&quot;, HttpStatus.NOT_FOUND);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if(transferAmountDTO.getTransferAmount() == 0){</b>
+<b class="fc">&nbsp;            return new ResponseEntity&lt;String&gt;(&quot;Please provide appropiate amount&quot;, HttpStatus.NOT_ACCEPTABLE);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        double updatedSenderWallet = senderWallet.get().getTotalBalance() - transferAmount;</b>
+<b class="fc">&nbsp;        if(updatedSenderWallet &lt; 0){</b>
+<b class="fc">&nbsp;            return new ResponseEntity&lt;String&gt;(&quot;Balance less than transfer amount&quot;, HttpStatus.NOT_ACCEPTABLE);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        double updatedReceiverWallet = receiverWallet.get().getTotalBalance() + transferAmount;</b>
+<b class="fc">&nbsp;        senderWallet.get().setTotalBalance(updatedSenderWallet);</b>
+<b class="fc">&nbsp;        walletRepository.save(senderWallet.get());</b>
+<b class="fc">&nbsp;        receiverWallet.get().setTotalBalance(updatedReceiverWallet);</b>
+<b class="fc">&nbsp;        walletRepository.save(receiverWallet.get());</b>
+<b class="fc">&nbsp;        transactionService.addTransaction(username,transferAmountDTO.getUsername(),transferAmountDTO.getTransferAmount());</b>
+<b class="fc">&nbsp;        return new ResponseEntity&lt;Wallet&gt;(senderWallet.get(), HttpStatus.OK);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-04-10 16:46</div>
+</div>
+</body>
+</html>
